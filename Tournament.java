@@ -47,7 +47,7 @@ public class Tournament {
         // Run tournament
         Arbiter judge = new Arbiter(player1, player2);
         for (int i = 0; i < numRounds; i++)
-            judge.runRound();
+            judge.runRound(false);
         
         // Print scores
         int[] scores = judge.getCurrentScore();

@@ -39,7 +39,7 @@ public class Arbiter {
     
     
     /** Plays a single round between player 1 and 2. */
-    public void runRound() {
+    public void runRound(boolean verbose) {
         Action a1;
         Action a2;
         
@@ -78,6 +78,13 @@ public class Arbiter {
                          ((a2 == Action.SPOCK) && (a1 == Action.ROCK)) ||
                          ((a2 == Action.ROCK) && (a1 == Action.SCISSORS)));
         
+    
+        // Verbose mode: print out the moves
+        if (verbose) {
+            System.out.println("P1: " + a1 + " P2: " + a2);
+        }
+
+
         if (p1Win)
             this.score[0]++;
         else if (p2Win)
