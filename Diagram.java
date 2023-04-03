@@ -1,10 +1,12 @@
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Diagram {
     public static HashMap<Action, List<Action>> beats = new HashMap<Action, List<Action>>();
     public static HashMap<Action, List<Action>> beaten_by = new HashMap<Action, List<Action>>();
+    public static ArrayList<Action> actions = new ArrayList<Action>();
 
     static {
         beats.put(Action.ROCK, Arrays.asList(Action.SCISSORS, Action.LIZARD));
@@ -18,5 +20,11 @@ public class Diagram {
         beaten_by.put(Action.SCISSORS, Arrays.asList(Action.ROCK, Action.SPOCK));
         beaten_by.put(Action.LIZARD, Arrays.asList(Action.ROCK, Action.SCISSORS));
         beaten_by.put(Action.SPOCK, Arrays.asList(Action.PAPER, Action.LIZARD));
+
+        actions.add(Action.ROCK);
+        actions.add(Action.PAPER);
+        actions.add(Action.SCISSORS);
+        actions.add(Action.LIZARD);
+        actions.add(Action.SPOCK);
     }
 }
