@@ -1,30 +1,39 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.lang.Math;
+import java.util.List;
+import java.util.Arrays;
 
 public class ShortTermMemoryBot implements RoShamBot {
-    int MEMORY_SIZE = 100;
+    int MEMORY_SIZE = 10;
     ArrayList<Action> memory;
     int count;
+    HashMap<Action, List<Action>> beaten_by = new HashMap<Action, List<Action>>();
 
     public ShortTermMemoryBot() {
+        beaten_by.put(Action.ROCK, Arrays.asList(Action.PAPER, Action.SPOCK));
+        beaten_by.put(Action.PAPER, Arrays.asList(Action.SCISSORS, Action.LIZARD));
+        beaten_by.put(Action.SCISSORS, Arrays.asList(Action.ROCK, Action.SPOCK));
+        beaten_by.put(Action.LIZARD, Arrays.asList(Action.ROCK, Action.SCISSORS));
+        beaten_by.put(Action.SPOCK, Arrays.asList(Action.PAPER, Action.LIZARD));
+
+
         memory = new ArrayList<Action>();
 
         // Init with ROCK
         for (int i = 0; i<MEMORY_SIZE; i++) {
-            memory.add(Action.ROCK);
+            memory.add(Action.LIZARD);
         }
     }
 
     Action lastMove = Action.ROCK;
 
     public Action getNextMove(Action lastOpponentMove) {
-        memory.add(count % MEMORY_SIZE, lastOpponentMove);
-        System.out.println(memory.get(count % MEMORY_SIZE));
+        memory.set(count % MEMORY_SIZE, lastOpponentMove);
         count++;
 
         Action mode = mode(memory);
-        return Diagram.beats.get(mode).get((int)Math.random()*Diagram.beats.size());
+        return beaten_by.get(mode).get((int)Math.random()*beaten_by.size());
     }
 
     // Modified from https://stackoverflow.com/questions/15725370/write-a-mode-method-in-java-to-find-the-most-frequently-occurring-element-in-anhttps://stackoverflow.com/questions/15725370/write-a-mode-method-in-java-to-find-the-most-frequently-occurring-element-in-an
@@ -50,39 +59,6 @@ public class ShortTermMemoryBot implements RoShamBot {
             else 
                 hm.put(array.get(i),1);
         }
-        System.out.println(temp);
         return temp;
-    }   
-
-
-    // Action getMode(ArrayList<Action> memory) {
-    //     Integer[] counts = {0,0,0,0,0};
-
-    //     for (Action a: memory) {
-    //         switch (a){
-    //             case ROCK:
-    //                 counts[0]++;
-    //             case PAPER:
-    //                 counts[1]++;
-    //             case SCISSORS:
-    //                 counts[2]++;
-    //             case LIZARD:
-    //                 counts[3]++;
-    //             case SPOCK:
-    //                 counts[4]++;
-    //         }
-    //     }
-
-    //     // Return argmax of counts
-    //     int re = Integer.MIN_VALUE;
-    //     int arg = -1;
-    //     for (int i = 0; i < counts.length; i++) {
-    //         if (counts[i] > re) {
-    //             re = counts[i];
-    //             arg = i;
-    //         }
-    //     }
-    //     return null;
-    // }
-   
+    }      
 }
