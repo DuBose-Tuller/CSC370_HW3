@@ -4,18 +4,23 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Arrays;
 
-public class First implements RoShamBot {
+public class PrioritizeBot implements RoShamBot {
+    int MEMORY_SIZE = 10;
+    double HIGH_PRIORITY = 0.3;
+    double LOW_PRIORITY = 0.05;
 
-    int MEMORY_SIZE = 25;
     ArrayList<Action> opp_memory;
-    ArrayList<Action> own_memory;
-    int[] scores = new int[MEMORY_SIZE];
-    int count;
+    int count = 0;
+
     HashMap<Action, List<Action>> beats = new HashMap<Action, List<Action>>();
     HashMap<Action, List<Action>> beaten_by = new HashMap<Action, List<Action>>();
-    ArrayList<Action> actions = new ArrayList<Action>();
+    HashMap<Action, Integer> order = new HashMap<Action, Integer>();
 
-    public First() {
+    // RPSLS ordering CUMULATIVE
+    double[] levers = {0.2, 0.4, 0.6, 0.8, 0.1}; // Nash
+    int levers_countdown = 0;
+
+    public PrioritizeBot() {
         beats.put(Action.ROCK, Arrays.asList(Action.SCISSORS, Action.LIZARD));
         beats.put(Action.PAPER, Arrays.asList(Action.ROCK, Action.SPOCK));
         beats.put(Action.SCISSORS, Arrays.asList(Action.PAPER, Action.LIZARD));
@@ -28,55 +33,71 @@ public class First implements RoShamBot {
         beaten_by.put(Action.LIZARD, Arrays.asList(Action.ROCK, Action.SCISSORS));
         beaten_by.put(Action.SPOCK, Arrays.asList(Action.PAPER, Action.LIZARD));
 
-        actions.add(Action.ROCK);
-        actions.add(Action.PAPER);
-        actions.add(Action.SCISSORS);
-        actions.add(Action.LIZARD);
-        actions.add(Action.SPOCK);
-
+        order.put(Action.ROCK, 0);
+        order.put(Action.PAPER, 1);
+        order.put(Action.SCISSORS, 2);
+        order.put(Action.LIZARD, 3);
+        order.put(Action.SPOCK, 4);
 
         opp_memory = new ArrayList<Action>();
-        own_memory = new ArrayList<Action>();
 
         // Init
         for (int i = 0; i<MEMORY_SIZE; i++) {
             opp_memory.add(Action.LIZARD);
-            own_memory.add(Action.LIZARD);
-            scores[i] = 0;
         }
     } 
 
 
 
     public Action getNextMove(Action lastOpponentMove) {
-        Action lastMove = own_memory.get(count);
+        ShortTermMemoryBot stm = new ShortTermMemoryBot();
+        Action move;
         opp_memory.set(count % MEMORY_SIZE, lastOpponentMove);
-        Action move = null;
-        
-        //Calculate result of last round        
-        double flip = Math.random();
-        if (flip > 0.5) {
-            move = nash();
-        } else {
-            move = new ShortTermMemoryBot().getNextMove(lastOpponentMove);
+
+        /* Main strategy */
+        Action target = stm.getNextMove(lastOpponentMove);
+
+        // Set the levers to optimize beating `target`
+        double[] dist = new double[5];
+        dist[order.get(target)] = HIGH_PRIORITY;
+        for (Action a: beaten_by.get(target)) {
+            dist[order.get(a)] = HIGH_PRIORITY;
         }
 
-        own_memory.set(count % (MEMORY_SIZE+1), move); 
+        for (Action a: beats.get(target)) {
+            dist[order.get(a)] = LOW_PRIORITY;
+        }
+
+        setLevers(dist);
+        move = useLevers(levers);
+
+        // Retern the selected move
+        count++;
         return move;
     }
 
-    Action nash() {
-        double coinFlip = Math.random();
+    void setLevers(double[] dist) {
+        assert dist.length == 5;
         
-        if (coinFlip <= 1.0/5.0)
+        double sum = 0;
+        for (int i=0; i<dist.length; i++) {
+            sum += dist[i];
+            levers[i] = sum;
+        }
+    }
+
+    Action useLevers(double[] levers) {
+        double flip = Math.random();
+
+        if (flip <= levers[0])
             return Action.ROCK;
-        else if (coinFlip <= 2.0/5.0)
+        else if (flip <= levers[1])
             return Action.PAPER;
-        else if (coinFlip <= 3.0/5.0)
+        else if (flip <= levers[2])
             return Action.SCISSORS;
-        else if (coinFlip <= 4.0/5.0)
+        else if (flip <= levers[3])
             return Action.LIZARD;
         else 
             return Action.SPOCK;
-    } 
+    }
 }
