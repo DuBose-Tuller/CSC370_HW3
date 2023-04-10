@@ -77,6 +77,7 @@ public class SuperStratBot implements RoShamBot {
                 
         //Lock in the win if we are sufficiently ahead
         if (game_diff > 300) {
+            System.out.println("SuperStratBot is superior! No more need to try...");
             reset_levers(); //Nash
             levers_countdown = NUM_ROUNDS;
             return useLevers(levers);
