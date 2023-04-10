@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Arrays;
 
 public class IocaineBot implements RoShamBot {
@@ -126,9 +125,9 @@ public class IocaineBot implements RoShamBot {
                 }
             }
 
-            System.out.print(e.getKey() + " " + e.getValue() + "\t");
+            //System.out.print(e.getKey() + " " + e.getValue() + "\t");
         }
-        System.out.println();
+        //System.out.println();
 
         // Now execute the best sub-strat against the mode
         try {
