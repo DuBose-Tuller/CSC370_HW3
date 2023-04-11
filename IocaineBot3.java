@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
-public class IocaineBot implements RoShamBot {
+public class IocaineBot3 implements RoShamBot {
     int NUM_VARIATIONS = 10;
     int MEMORY_SIZE = 10;   
-    HashMap<String, Integer> strats = new HashMap<String, Integer>();
+    HashMap<String, Integer> strats = new HashMap<String, List<Integer>>();
     HashMap<Action, List<Action>> beaten_by = new HashMap<Action, List<Action>>();
     HashMap<Action, List<Action>> beats = new HashMap<Action, List<Action>>();
     ArrayList<Action> opp_memory;
     ArrayList<Action> own_memory;
     int count = 0;
     
-    public IocaineBot() {
+    public IocaineBot3() {
         beats.put(Action.ROCK, Arrays.asList(Action.SCISSORS, Action.LIZARD));
         beats.put(Action.PAPER, Arrays.asList(Action.ROCK, Action.SPOCK));
         beats.put(Action.SCISSORS, Arrays.asList(Action.PAPER, Action.LIZARD));
@@ -30,7 +30,9 @@ public class IocaineBot implements RoShamBot {
         beaten_by.put(Action.LIZARD, Arrays.asList(Action.ROCK, Action.SCISSORS));
         beaten_by.put(Action.SPOCK, Arrays.asList(Action.PAPER, Action.LIZARD));
 
-        strats.put("p0", 0);
+        int[] empty = {0,0,0,0,0,0};
+
+        strats.put("p0", Arrays.asList(empty));
         strats.put("p1", 0);
         strats.put("p2", 0);
         strats.put("p0 own", 0);
@@ -180,3 +182,4 @@ public class IocaineBot implements RoShamBot {
         return temp;
     }
 }
+
