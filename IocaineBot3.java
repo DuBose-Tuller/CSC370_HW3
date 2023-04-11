@@ -10,7 +10,8 @@ import java.util.Arrays;
 public class IocaineBot3 implements RoShamBot {
     int NUM_VARIATIONS = 10;
     int MEMORY_SIZE = 10;   
-    HashMap<String, Integer> strats = new HashMap<String, List<Integer>>();
+    int STRAT_MEM_SIZE = 10;
+    HashMap<String, List<Integer>> strats = new HashMap<String, List<Integer>>();
     HashMap<Action, List<Action>> beaten_by = new HashMap<Action, List<Action>>();
     HashMap<Action, List<Action>> beats = new HashMap<Action, List<Action>>();
     ArrayList<Action> opp_memory;
@@ -30,14 +31,17 @@ public class IocaineBot3 implements RoShamBot {
         beaten_by.put(Action.LIZARD, Arrays.asList(Action.ROCK, Action.SCISSORS));
         beaten_by.put(Action.SPOCK, Arrays.asList(Action.PAPER, Action.LIZARD));
 
-        int[] empty = {0,0,0,0,0,0};
+        List<Integer> empty = new ArrayList<Integer>();
+        for (int i=0; i<STRAT_MEM_SIZE; i++) {
+            empty.add(0);
+        }
 
-        strats.put("p0", Arrays.asList(empty));
-        strats.put("p1", 0);
-        strats.put("p2", 0);
-        strats.put("p0 own", 0);
-        strats.put("p1 own", 0);
-        strats.put("p2 own", 0);
+        strats.put("p0", empty);
+        strats.put("p1", empty);
+        strats.put("p2", empty);
+        strats.put("p0 own", empty);
+        strats.put("p1 own", empty);
+        strats.put("p2 own", empty);
 
 
         opp_memory = new ArrayList<Action>();
@@ -102,29 +106,31 @@ public class IocaineBot3 implements RoShamBot {
 
             // Calculate scores
             if (beats.get(a).contains(lastOpponentMove)) {
-                strats.put(f, strats.get(f) + 1);
+                strats.get(f).set(count % STRAT_MEM_SIZE, 1);
             } else if (beaten_by.get(a).contains(lastOpponentMove)) {
-                strats.put(f, strats.get(f) - 1);
-            } 
-            // If tie no change necessary
+                strats.get(f).set(count % STRAT_MEM_SIZE, -1);
+            } else {
+                strats.get(f).set(count % STRAT_MEM_SIZE, 0);
+            }
         }
 
         // Use strat with highest score
         int maxScore = Integer.MIN_VALUE;
         String maxStrat = "p0";
-        for (Map.Entry<String, Integer> e: strats.entrySet()) {
-            if (e.getValue() > maxScore) {
+        for (Map.Entry<String, List<Integer>> e: strats.entrySet()) {
+            int val = e.getValue().stream().mapToInt(i -> i).sum();
+            if (val > maxScore) {
                 maxStrat = e.getKey();
-                maxScore = e.getValue();
-            } else if (e.getValue() == maxScore) {// Handle ties sortof randomly
+                maxScore = val;
+            } else if (val == maxScore) {// Handle ties sortof randomly
                 double flip = Math.random();
                 if (flip > 0.5) {
                     maxStrat = e.getKey();
-                    maxScore = e.getValue();
+                    maxScore = val;
                 }
             }
 
-            System.out.print(e.getKey() + " " + e.getValue() + "\t");
+            System.out.print(e.getKey() + " " + e.getValue().stream().mapToInt(i -> i).sum() + "\t");
         }
         System.out.println(" Pick: " + maxStrat);
 
