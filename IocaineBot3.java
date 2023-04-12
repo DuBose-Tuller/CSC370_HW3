@@ -130,9 +130,9 @@ public class IocaineBot3 implements RoShamBot {
                 }
             }
 
-            System.out.print(e.getKey() + " " + e.getValue().stream().mapToInt(i -> i).sum() + "\t");
+            //System.out.print(e.getKey() + " " + e.getValue().stream().mapToInt(i -> i).sum() + "\t");
         }
-        System.out.println(" Pick: " + maxStrat);
+        //System.out.println(" Pick: " + maxStrat);
 
 
         // Now execute the best sub-strat against the mode

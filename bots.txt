@@ -1,0 +1,12 @@
+ApeBot
+BeatApeBot
+IocaineBot
+IocaineBot2
+IocaineBot3
+MixedBot
+NashBot
+PrioritizeBot
+ShortTermMemoryBot
+SolidAsARockBot
+SuperStratBot
+TreeBot4
